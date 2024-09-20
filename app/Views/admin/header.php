@@ -104,7 +104,7 @@
                 </a>
 
                 <!-- Botón de Cerrar sesión a la derecha -->
-                <button class="btn btn-danger ms-auto">Cerrar Sesión</button>
+                <a href="<?php echo base_url('web/logout') ?>"><button class="btn btn-danger ms-auto">Cerrar Sesión</button></a>
             </div>
         </nav>
 
