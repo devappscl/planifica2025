@@ -4,12 +4,12 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 
-class AdminController extends BaseController
+class AsignaturaController extends BaseController
 {
-    public function home()
+    public function index()
     {
         echo view('admin/header');
-        echo view('admin/home');  // Vista del home del administrador
+        echo view('admin/asignaturas');
         echo view('admin/footer');
     }
 }

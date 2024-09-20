@@ -8,7 +8,7 @@ class LoginController extends BaseController
 {
     public function index()
     {
-        return view('login/login');  // Mostrar la vista del login
+        return view('login/login');
     }
 
     public function logout()

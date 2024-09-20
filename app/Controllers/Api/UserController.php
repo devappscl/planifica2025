@@ -73,39 +73,45 @@ class UserController extends ResourceController
 
     public function login()
     {
+        $rules = [
+            'email' => 'required|valid_email',
+            'password' => 'required',
+        ];
+
+        if (!$this->validate($rules)) {
+            return $this->fail($this->validator->getErrors());
+        }
+
         $userModel = new UserModel();
-        $email = $this->request->getPost('email');
-        $password = $this->request->getPost('password');
-    
-        $user = $userModel->where('email', $email)->first();
-    
-        if (!$user || !password_verify($password, $user['password'])) {
-            return $this->failUnauthorized('Credenciales incorrectas');
+        $user = $userModel->where('email', $this->request->getVar('email'))->first();
+
+        if (!$user || !password_verify($this->request->getVar('password'), $user['password'])) {
+            return $this->failUnauthorized('Invalid login credentials');
         }
-    
-        if ($user['email_verified'] == 0) {
-            return $this->failUnauthorized('Por favor verifica tu correo antes de iniciar sesión.');
-        }
-    
+
         // Generar el token JWT
         $secretKey = getenv('JWT_SECRET');
         $payload = [
             'iat' => time(),
-            'exp' => time() + 3600,  // El token expira en 1 hora
+            'exp' => time() + 3600,  // Token válido por 1 hora
             'data' => [
                 'id_usuario' => $user['id_usuario'],
                 'email' => $user['email'],
-                'nivel' => $user['nivel']
+                'nivel' => $user['nivel'],
             ]
         ];
-    
+
         $token = JWT::encode($payload, $secretKey, 'HS256');
-    
+        
+        session()->set('jwt_token', $token);
+
         return $this->respond([
+            'status' => 200,
             'message' => 'Login successful',
             'token' => $token,
-            'nivel' => $user['nivel']  // Devolver el nivel del usuario
+            'nivel' => $user['nivel'],
         ]);
+
     }
 
 

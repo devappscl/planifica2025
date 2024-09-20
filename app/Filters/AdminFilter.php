@@ -12,8 +12,14 @@ class AdminFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
-        // Obtener el token JWT de la sesión
+        // Obtener el token JWT del encabezado Authorization o de la sesión
+        $authHeader = $request->getHeaderLine('Authorization');
         $token = session()->get('jwt_token');
+
+        if (!$token && $authHeader) {
+            // Extraer el token de "Bearer {token}"
+            $token = explode(' ', $authHeader)[1];
+        }
 
         if (!$token) {
             return redirect()->to('/web/login')->with('error', 'Authorization token missing');
@@ -32,9 +38,8 @@ class AdminFilter implements FilterInterface
             return redirect()->to('/web/login')->with('error', 'Access restricted to administrators only');
         }
 
-        $logger = service('logger');
-        $logger->debug('Token JWT: ' . $token);
-
+        // Log para debugging
+        log_message('debug', 'Token validado, nivel: ' . $decoded->data->nivel);
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
