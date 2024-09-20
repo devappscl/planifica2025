@@ -19,6 +19,11 @@ $routes->group('web', ['namespace' => 'App\Controllers\Web'], function($routes) 
     $routes->get('login', 'LoginController::index');
     $routes->post('login/authenticate', 'LoginController::authenticate');
     $routes->get('logout', 'LoginController::logout');
+
+    // Ruta para el registro de usuarios
+    $routes->get('register', 'RegisterController::index');  // Muestra el formulario de registro
+    $routes->post('register', 'RegisterController::create');  // Maneja el envío del formulario
+
 });
 
 $routes->group('user', ['namespace' => 'App\Controllers\Web'], function($routes) {
