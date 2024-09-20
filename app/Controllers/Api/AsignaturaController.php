@@ -24,7 +24,7 @@ class AsignaturaController extends ResourceController
         $model = new AsignaturaModel();
         $data = [
             'nombre' => $this->request->getPost('nombre'),
-            'nivel_id' => $this->request->getPost('nivel_id') // Relacionar con nivel educativo
+            'id_niveleducativo' => $this->request->getPost('nivel_id') // Relacionar con nivel educativo
         ];
 
         if ($model->insert($data)) {
@@ -47,27 +47,40 @@ class AsignaturaController extends ResourceController
         }
     }
 
+    
     // Actualizar una asignatura
     public function update($id = null)
     {
         $model = new AsignaturaModel();
-
-        // Capturar el JSON recibido y devolverlo temporalmente
-        $data = $this->request->getJSON(true);
         
-        if (empty($data)) {
-            return $this->respond(['status' => 'fail', 'message' => 'No data received']);
+        // Obtener el JSON enviado desde el cliente
+        $json = $this->request->getJSON(true); // true para recibirlo como un array asociativo
+
+        // Verifica si el JSON tiene los campos que necesitamos
+        if (!isset($json['nombre']) || !isset($json['id_niveleducativo'])) {
+            return $this->failValidationErrors([
+                'nombre' => 'El campo nombre es obligatorio.',
+                'id_niveleducativo' => 'El campo nivel educativo es obligatorio.'
+            ]);
         }
-        
-        return $this->respond(['received_data' => $data]);  // Ver qué datos se están enviando
 
-        // Si los datos son correctos, continuar con la actualización
+        $data = [
+            'nombre' => $json['nombre'],
+            'id_niveleducativo' => $json['id_niveleducativo']
+        ];
+
+        // Actualizar la asignatura
         if ($model->update($id, $data)) {
-            return $this->respond(['status' => 'success', 'message' => 'Asignatura actualizada exitosamente']);
+            return $this->respond([
+                'status' => 'success',
+                'message' => 'Asignatura actualizada exitosamente'
+            ]);
         } else {
             return $this->failValidationErrors($model->errors());
         }
     }
+
+
 
 
     // Eliminar una asignatura

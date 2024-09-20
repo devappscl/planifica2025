@@ -85,6 +85,7 @@
             searching: true,  // Activar búsqueda
             paging: true,
             info: false,
+            pageLength: 10,  // Establecer 15 elementos por página
             autoWidth: false,  // Ajuste automático de columnas
             language: {
                 url: '<?= base_url("/assets/js/es-CL.json") ?>'  // Ruta local del archivo JSON

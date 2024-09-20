@@ -1,13 +1,16 @@
 <div class="container-full">
+    <div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Gestión de Asignaturas</h1>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalAgregarAsignatura">
+            <i class="bi bi-plus"></i> Agregar Asignatura
+        </button>
+    </div>
     <p>Aquí puedes agregar, editar o eliminar asignaturas educativas.</p>
 </div>
 
 <div class="row mt-4">
     <div class="col-md-12">
-        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalAgregarAsignatura">
-            <i class="bi bi-plus"></i> Agregar Asignatura
-        </button>
+        
 
         <!-- Tabla de Asignaturas -->
         <table id="asignaturaTable" class="table">
@@ -133,10 +136,17 @@
             let nombreAsignatura = $('#editarNombreAsignatura').val();
             let nivelAsignatura = $('#editarNivelAsignatura').val();
 
+            // Convertimos los datos en formato JSON
+            let data = JSON.stringify({
+                nombre: nombreAsignatura,
+                id_niveleducativo: nivelAsignatura
+            });
+
             $.ajax({
                 url: `/api/asignaturas/${id}`,  // Usamos el ID en la URL para actualizar la asignatura correcta
                 method: 'PUT',
-                data: { nombre: nombreAsignatura, nivel_id: nivelAsignatura }, // Datos que se envían en el cuerpo de la solicitud
+                data: data, // Datos que se envían en el cuerpo de la solicitud, ahora como JSON
+                contentType: 'application/json', // Definimos el tipo de contenido como JSON
                 success: function(response) {
                     $('#modalEditarAsignatura').modal('hide');
                     cargarAsignaturas(); // Recargamos la tabla de asignaturas
@@ -147,6 +157,7 @@
                 }
             });
         });
+
 
         // Cargar asignaturas desde la API
         function cargarAsignaturas() {
@@ -166,8 +177,10 @@
                                 asignatura.id,
                                 asignatura.nombre,
                                 nombreNivel,
-                                `<button class="btn btn-sm btn-warning" onclick="editarAsignatura(${asignatura.id}, '${asignatura.nombre}', ${asignatura.id_niveleducativo})">Editar</button>
-                                <button class="btn btn-sm btn-danger" onclick="eliminarAsignatura(${asignatura.id})">Eliminar</button>`
+                                `<div class="btn-group">
+                                <button class="btn btn-sm btn-warning" onclick="editarAsignatura(${asignatura.id}, '${asignatura.nombre}', ${asignatura.id_niveleducativo})">Editar</button>
+                                <button class="btn btn-sm btn-danger" onclick="eliminarAsignatura(${asignatura.id})">Eliminar</button>
+                             </div>`
                             ]).draw();
                         });
                     });
